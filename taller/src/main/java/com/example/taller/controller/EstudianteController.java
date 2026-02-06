@@ -2,14 +2,16 @@ package com.example.taller.controller;
 
 import com.example.taller.model.Estudiante;
 import com.example.taller.repository.EstudianteRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/estudiantes")
-
 public class EstudianteController {
+
     private final EstudianteRepository repository;
 
     public EstudianteController(EstudianteRepository repository) {
@@ -17,24 +19,26 @@ public class EstudianteController {
     }
 
     @PostMapping
-    public String crearEstudiante(@RequestBody Estudiante estudiante) {
+    public ResponseEntity<?> registrarEstudiante(@RequestBody Estudiante estudiante) {
+
+        // validar
+        if (repository.existsById(estudiante.getId())) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Ya existe un estudiante con ese ID");
+        }
+
         repository.save(estudiante);
-        return "Estudiante registrado correctamente";
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(estudiante);
     }
 
     @GetMapping
-    public List<Estudiante> listarEstudiantes() {
-        return repository.findAll();
+    public ResponseEntity<List<Estudiante>> listarEstudiantes() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(repository.findAll());
     }
-
-     @GetMapping("/test")
-    public String test() {
-        return "API estudiantes funcionando";
-    }
-
-    @GetMapping("/{id}")
-    public Estudiante buscarPorId(@PathVariable String id) {
-        return repository.findById(id);
-    }
-
 }

@@ -1,9 +1,11 @@
 package com.example.taller.repository;
+
 import com.example.taller.model.Estudiante;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Repository
 public class EstudianteRepository {
 
@@ -17,14 +19,13 @@ public class EstudianteRepository {
         estudiantes.add(estudiante);
     }
 
-    public Estudiante findById(String id) {
+    public boolean existsById(String id) {
         for (Estudiante e : estudiantes) {
             if (e.getId().equals(id)) {
-                return e;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 }
-
 
